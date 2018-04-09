@@ -7,7 +7,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Navbar/>
+         {this.props.location.pathname !== "/" && <Navbar/>}  
        {routes}
       </div>
     );

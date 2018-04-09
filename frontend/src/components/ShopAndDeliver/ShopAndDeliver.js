@@ -1,11 +1,10 @@
 import React, {Component} from 'react'
 
-export default class Navbar extends Component {
+export default class ShopAndDeliver extends Component {
     render (){
         return(
             <div>
-                Nav
-                <button className="button">Login</button>
+                Shop and Deliver
             </div>
         )
     }

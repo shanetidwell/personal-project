@@ -22,7 +22,10 @@
   font-size: large;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.button {
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+  
 }
+
