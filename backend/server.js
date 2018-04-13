@@ -103,11 +103,22 @@ app.get("/auth/me", (req, res) => {
   }
 });
 
+app.get('/api/logout', function(req,res){
+    req.logout();
+    console.log('logging out');    
+    res.status(200).send();
+})
+
 app.post("/api/storeRequest", isAuthenticated,RequestController.create);
+app.post("/api/storeRequest/:id/", isAuthenticated,RequestController.changeStatus);
+app.get('/api/storeRequest/:id', isAuthenticated, RequestController.getStoreName)
+app.get("/api/requests", isAuthenticated,RequestController.get);
+
 
 app.post("/api/:store_request_id/item", isAuthenticated, ItemController.create);
+app.get('/api/items/:request_id', isAuthenticated, ItemController.get);
 
-app.listen(port, () => {
+server = app.listen(port, () => {
   console.log("listening on port", port);
 });
 

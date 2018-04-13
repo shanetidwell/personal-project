@@ -28,4 +28,13 @@
   border-radius: 3px;
   
 }
+.blue-color {
+  background-color: #309EE8;
+}
+.green-color {
+  background-color: #31E88F;
+}
+.main-font {
+  font-family: 'Roboto', sans-serif;  
+}
 

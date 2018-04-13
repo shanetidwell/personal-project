@@ -16,8 +16,8 @@ class Home extends Component {
         return (
             this.props.user.id?
             <div className="home-page">
-                <Link to={'/request'}><button className="button request-button" >Make Request</button></Link>
-                <Link to={'/shopanddeliver'}><button className="button fulfill-button">Become a Driver</button></Link>
+                <Link to={'/request'}><button className="button request-button" >Place Order</button></Link>
+                <Link to={'/shopanddeliver'}><button className="button fulfill-button">Shop and Deliver</button></Link>
             </div>
 
             :

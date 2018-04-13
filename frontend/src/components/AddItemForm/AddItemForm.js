@@ -1,34 +1,24 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom';
 import axios from 'axios';
-import AddItemForm from '../AddItemForm/AddItemForm';
-import {connect} from 'react-redux'
 
-export default class AddItem extends Component {
+export default class AddItemForm extends Component {
     constructor(props){
         super(props);
         this.state = {
-            // description: "",
-            // price: "", 
-            // brand: "",
-            // size: "",
-            // color: "",
-            // quantity: "",   
-            // link: "", 
-            storeName: "",
-            storeCity: ""    
+            description: "",
+            price: "", 
+            brand: "",
+            size: "",
+            color: "",
+            quantity: "",   
+            link: "",        
         }
-    }
-    componentWillMount = ()=>{
-        axios.get(`/api/storeRequest/${this.props.match.params.store_request_id}`).then(response=>{
-            console.log("getting store name", response);
-            this.setState({storeName: response.data[0].store_name, storeCity: response.data[0].city})
-        })
     }
     submit = ()=>{
         const addItem = {...this.state};
         console.log(22222, addItem);
-        axios.post(`/api/${this.props.match.params.store_request_id}/item`, addItem).then(response=>{
+        axios.post(`/api/${this.props.store_request_id}/item`, addItem).then(response=>{
         
             console.log("response", response.data[0]);
             // this.setState({added: true, storeRequestId: response.data[0].id})
@@ -41,11 +31,8 @@ export default class AddItem extends Component {
     render (){
         return(
             <div>
-                <span>{this.state.storeName}</span>
-                <span>{this.state.storeCity}</span>
-                Add Item {this.props.match.params.store_request_id}   
-                <AddItemForm store_request_id={this.props.match.params.store_request_id}/>
-                {/* <span>Item Description</span>
+                 {/* {this.props.match.params.store_request_id}        */}
+                <span>Item Description</span>
                 <input type="text" value={this.state.description} name="description" onChange={this.handleChange}></input>
                 <span>Price</span>
                 <input type="number"value={this.state.price} name="price" onChange={this.handleChange}></input>
@@ -59,7 +46,7 @@ export default class AddItem extends Component {
                 <input type="number" value={this.state.quantity} name="quantity" onChange={this.handleChange}></input>
                 <span>Link</span>
                 <input type="text" value={this.state.link} name="link" onChange={this.handleChange}></input>
-                <button className="button" onClick={()=>this.submit()}>Submit</button> */}
+                <button className="button" onClick={()=>this.submit()}>Submit</button>
             </div>
         )
     }
