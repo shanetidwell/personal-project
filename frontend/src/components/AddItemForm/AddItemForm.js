@@ -18,10 +18,10 @@ export default class AddItemForm extends Component {
     submit = ()=>{
         const addItem = {...this.state};
         console.log(22222, addItem);
-        axios.post(`/api/${this.props.store_request_id}/item`, addItem).then(response=>{
+        axios.post(`/api/${this.props.gift_request_id}/item`, addItem).then(response=>{
         
             console.log("response", response.data[0]);
-            // this.setState({added: true, storeRequestId: response.data[0].id})
+            
         }).catch(e=>console.log(e));
     }
 
@@ -31,7 +31,6 @@ export default class AddItemForm extends Component {
     render (){
         return(
             <div>
-                 {/* {this.props.match.params.store_request_id}        */}
                 <span>Item Description</span>
                 <input type="text" value={this.state.description} name="description" onChange={this.handleChange}></input>
                 <span>Price</span>

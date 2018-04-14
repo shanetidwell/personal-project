@@ -2,19 +2,21 @@ import React, {Component} from 'react'
 import {Link, Redirect} from 'react-router-dom';
 import axios from 'axios';
 import AddItemForm from '../AddItemForm/AddItemForm';
-import {addStoreRequest} from '../../redux/reducers/userRequest';
+import {addGiftRequest} from '../../redux/reducers/userRequest';
 import {connect} from 'react-redux';
 
 class Request extends Component {
     constructor(props){
         super(props);
         this.state = {
-            store_name: "",
-            city: "",
-            state:"",
-            zip: "",
+            gender: "",
+            age: "",
+            interests:"",
+            size: "",
+            favoriteColors: "",
+            notes: "",
             added: false,
-            storeRequestId: null,
+            giftRequestId: null,
             
         }
     }
@@ -23,39 +25,35 @@ class Request extends Component {
     }
     
     addRequest = ()=>{
-        const storeRequest = {...this.state};
-        console.log("99999")
+        const giftRequest = {...this.state};
         console.log(this.props)
-        this.props.addStoreRequest(storeRequest);
-        // axios.post('/api/storeRequest', storeRequest).then(response=>{
-        //     console.log("id", response.data[0].id);
-        //     this.setState({added: true, storeRequestId: response.data[0].id})
-        // }).catch(e=>console.log(e));
+        this.props.addGiftRequest(giftRequest);
     }
 
     
     render (){
-        // const {storeRequest} = this.props.userRequest.storeRequest[0]
-        if (this.props.userRequest.storeRequestAdded){
-            return <Redirect to={`/request/${this.props.userRequest.storeRequest[0].id}/addItem`}/>
+        if (this.props.userRequest.giftRequestAdded){
+            return <Redirect to={`/home`}/>
+            // return <Redirect to={`/request/${this.props.userRequest.giftRequest[0].id}/addItem`}/>
         }
         return(
             <div>
                 {/* {this.state.added === false?( */}
                 <div>
-                    <h1>Store Name</h1>
-                    <input type="text" value={this.state.store_name} name = "store_name" onChange={this.handleChange}></input>
-                    <h3>Store Location</h3>
-                    <span>City</span>
-                    <input type="text" value={this.state.city} name = "city" onChange={this.handleChange}></input>
-                    <span>State</span>
-                    <input type="text" value={this.state.state} name = "state" onChange={this.handleChange}></input>
-                    <span>Zip</span>
-                    <input type="number" value={this.state.zip} name = "zip" onChange={this.handleChange}></input>
+                    <span>Gender</span>
+                    <input type="text" value={this.state.gender} name = "gender" onChange={this.handleChange}></input>
+                    <span>Age</span>
+                    <input type="number" value={this.state.age} name = "age" onChange={this.handleChange}></input>
+                    <span>Interests</span>
+                    <input type="text" value={this.state.interests} name = "interests" onChange={this.handleChange}></input>
+                    <span>Size</span>
+                    <input type="text" value={this.state.size} name = "size" onChange={this.handleChange}></input>
+                    <span>Favorite Colors</span>
+                    <input type="text" value={this.state.favoriteColors} name = "favoriteColors" onChange={this.handleChange}></input>
+                    <span>Any Additionaly Information</span>
+                    <input type="text" value={this.state.notes} name = "notes" onChange={this.handleChange}></input>
                     <button className="button" onClick={()=>this.addRequest()}>Add Item</button>
                 </div>
-               
-                {/* <button className="button" onClick={()=>this.addStoreRequest()}>Add Item</button> */}
                 
             </div>
         )
@@ -66,4 +64,4 @@ function mapStateToProps(state){
     return {userRequest}   
 }
 
-export default connect(mapStateToProps,{addStoreRequest})(Request);
+export default connect(mapStateToProps,{addGiftRequest})(Request);

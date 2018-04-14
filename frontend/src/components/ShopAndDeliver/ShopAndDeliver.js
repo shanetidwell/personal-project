@@ -20,9 +20,10 @@ export default class ShopAndDeliver extends Component {
             <div>
                 Shop and Deliver
                 {this.state.requests.map((request)=>{
-                    var {id, store_name, city, zip} = request
+                    const {id, gender, years_old, interests, favorite_colors, size, notes} = request
                     return (
-                        <DeliveryRequest key={id} requestId={id} store_name={store_name} city={city} zip={zip}/>
+                        <DeliveryRequest key={id} requestId={id} gender={gender} age={years_old} interests={interests}
+                         size={size} favoriteColors={favorite_colors} notes={notes}/>
                     )
                 })}
             </div>

@@ -2,12 +2,12 @@ import axios from 'axios'
 import AddItem from '../../components/AddItem/AddItem';
 
 const initialState = {
-    storeRequest: [],
-    storeRequestAdded: false,
+    giftRequest: [],
+    giftRequestAdded: false,
     items: []
 }
 const ADD_ITEM = 'ADD_ITEMS';
-const ADD_STORE = 'ADD_STORE';
+const ADD_GIFT_REQUEST = 'ADD_GIFT_REQUEST';
 
 export default (state = initialState, action) => {
     switch (action.type) {
@@ -16,20 +16,20 @@ export default (state = initialState, action) => {
         var tempState = {...state}
         tempState.items.push(action.payload)
         return {tempState}
-      case ADD_STORE + '_FULFILLED':
+      case ADD_GIFT_REQUEST + '_FULFILLED':
         console.log('Add store')
-        return {...state, storeRequest: action.payload.data, storeRequestAdded: true}
+        return {...state, giftRequest: action.payload.data, giftRequestAdded: true}
       default:
         return state
     }
 }
-export function addStoreRequest(newRequest){
+export function addGiftRequest(newRequest){
   return {
-    type: ADD_STORE,
-    payload: axios.post('/api/storeRequest', newRequest)
+    type: ADD_GIFT_REQUEST,
+    payload: axios.post('/api/giftRequest', newRequest)
   }
 }
-// axios.post('/api/storeRequest', storeRequest)
+
 
 export function addItem(item) {
     return {

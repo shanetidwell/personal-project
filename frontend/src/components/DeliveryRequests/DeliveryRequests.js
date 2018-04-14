@@ -19,7 +19,7 @@ export default class ShopAndDeliver extends Component {
         })
     }
     makeDelivery= ()=>{
-        axios.post(`/api/storeRequest/${this.props.requestId}/?status=requested`).then(response=>{
+        axios.post(`/api/giftRequest/${this.props.requestId}/?status=requested`).then(response=>{
             console.log("made delivery")
             console.log(response);
         })
@@ -30,25 +30,21 @@ export default class ShopAndDeliver extends Component {
 
     render (){
         console.log("rendered")
-        const {requestId, store_name, city, zip} = this.props;
+        const {requestId, gender, age, interests, size, favoriteColors, notes} = this.props;
         return(
+           
             <div>
                 <span>{requestId}</span>
-                <span>{store_name}</span>
-                <span>{city}</span>
-                <span>{zip}</span>
+                <span>{gender}</span>
+                <span>{age}</span>
                 {this.state.showItems &&
-                this.state.items.map(item=>{
-                    const{id, description, link, price, quantity} = item
-                    return(
-                        <div key={id}>
-                            <span>{description}</span>
-                            <span>{price}</span>
-                            <span>{quantity}</span>
-                            <span>{link}</span> 
-                        </div>
-                    )
-                })}
+                <div>
+                    <p>{interests}</p>
+                    <span>{favoriteColors}</span>
+                    <span>{size}</span>
+                    <p>{notes}</p>
+                </div>
+                }
                 
                 {this.state.showItems===false?
                 <button className="button" onClick={()=>this.setState({showItems: true})}>Expand</button>

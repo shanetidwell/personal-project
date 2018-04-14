@@ -20,7 +20,7 @@ export default class AddItem extends Component {
         }
     }
     componentWillMount = ()=>{
-        axios.get(`/api/storeRequest/${this.props.match.params.store_request_id}`).then(response=>{
+        axios.get(`/api/giftRequest/${this.props.match.params.gift_request_id}`).then(response=>{
             console.log("getting store name", response);
             this.setState({storeName: response.data[0].store_name, storeCity: response.data[0].city})
         })
@@ -28,10 +28,9 @@ export default class AddItem extends Component {
     submit = ()=>{
         const addItem = {...this.state};
         console.log(22222, addItem);
-        axios.post(`/api/${this.props.match.params.store_request_id}/item`, addItem).then(response=>{
+        axios.post(`/api/${this.props.match.params.gift_request_id}/item`, addItem).then(response=>{
         
             console.log("response", response.data[0]);
-            // this.setState({added: true, storeRequestId: response.data[0].id})
         }).catch(e=>console.log(e));
     }
 
@@ -43,8 +42,8 @@ export default class AddItem extends Component {
             <div>
                 <span>{this.state.storeName}</span>
                 <span>{this.state.storeCity}</span>
-                Add Item {this.props.match.params.store_request_id}   
-                <AddItemForm store_request_id={this.props.match.params.store_request_id}/>
+                Add Item {this.props.match.params.gift_request_id}   
+                <AddItemForm gift_request_id={this.props.match.params.gift_request_id}/>
                 {/* <span>Item Description</span>
                 <input type="text" value={this.state.description} name="description" onChange={this.handleChange}></input>
                 <span>Price</span>

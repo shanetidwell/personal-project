@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import './Navbar.css'
 import axios from 'axios';
-import {Redirect} from 'react-router-dom'
+import socketIOClient from 'socket.io.client';
+import {Redirect} from 'react-router-dom';
 import {getUserInfo} from '../../redux/reducers/user';
 
 class Navbar extends Component {
@@ -31,7 +32,7 @@ class Navbar extends Component {
         return(
             <div className="nav-bar blue-color main-font">
                 <img className="profile-pic" src={this.props.user.profile_pic}></img>
-                <button className="button my-requests blue-color main-font" onClick={()=>this.logout()}>My Requests</button>                
+                <button className="button my-requests blue-color main-font" onClick={()=>this.logout()}>My Gift Requests</button>                
                 <button className="button logout blue-color main-font" onClick={()=>this.logout()}>Logout</button>
             </div>
         )
