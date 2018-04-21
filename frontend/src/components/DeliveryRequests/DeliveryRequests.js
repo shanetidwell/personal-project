@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import axios from 'axios';
+import io from 'socket.io-client';
+const socket = io("http://localhost:4000");
 
-export default class ShopAndDeliver extends Component {
+export default class DeliveryRequest extends Component {
     constructor(props){
         super(props)
          this.state = {
@@ -19,9 +21,15 @@ export default class ShopAndDeliver extends Component {
         })
     }
     makeDelivery= ()=>{
-        axios.post(`/api/giftRequest/${this.props.requestId}/?status=requested`).then(response=>{
+        axios.post(`/api/giftRequest/${this.props.requestId}`).then(response=>{
+
             console.log("made delivery")
             console.log(response);
+            socket.emit('room', {room: 5});
+            socket.emit('make request', {
+                room: 5,
+                requestMade: true
+            })
         })
     }
    collapse = ()=>{
