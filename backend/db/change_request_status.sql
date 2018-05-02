@@ -1,6 +1,6 @@
-update store_requests
+update gift_requests
 set status = ${status},
-    driver_id = ${user_id}
-where id = ${store_request_id}
+    requester_id = ${user_id}
+where id = ${gift_request_id}
 
 returning *;

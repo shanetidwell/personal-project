@@ -1,5 +1,5 @@
-INSERT INTO items( user_id, store_request_id, description, brand,size, color, price, quantity, link )
-VALUES (${user_id}, ${store_request_id}, ${description}, ${brand}, ${size}, ${color}, ${price} ,${quantity} ,${link})
+INSERT INTO items( user_id, gift_request_id, description, brand,size, color, price, quantity, link )
+VALUES (${user_id}, ${gift_request_id}, ${description}, ${brand}, ${size}, ${color}, ${price} ,${quantity} ,${link})
 
 Returning *;
 

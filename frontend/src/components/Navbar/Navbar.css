@@ -1,4 +1,22 @@
-.profile-pic {
+.notification {
+    position: relative;
+}
+.notification[data-badge]:after {
+    content:attr(data-badge);
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: .6em;
+    background: rgb(221, 61, 61);
+    color: white;
+    width: 18px; height: 18px;
+    text-align: center;
+    line-height:18px;
+    border-radius:50%;
+    box-shadow:0 0 1px #333;
+}
+
+/* .profile-pic {
     width: 35px;
     height: 35px;
     border-radius: 50%
@@ -23,4 +41,10 @@
 }
 .profile-pic {
     box-shadow: 0px 0px 4px;
-}
+}*/
+a {
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} 

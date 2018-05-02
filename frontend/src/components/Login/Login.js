@@ -56,7 +56,8 @@ export default class Login extends Component{
           paddingRight: "30px",
           fontFamily:"'Amatic SC', cursive",
           fontWeight: "bold",
-          boxShadow: "0px 2px 2px #C9C9C9",
+          boxShadow: "0px 2px 2px #163D57",
+          // boxShadow: "0px 2px 2px #C9C9C9",
           marginBottom: "2px"
         },
         line: {

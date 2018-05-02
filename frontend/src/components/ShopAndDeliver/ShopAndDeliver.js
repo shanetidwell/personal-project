@@ -16,9 +16,12 @@ export default class ShopAndDeliver extends Component {
         })
     }
     render (){
+        const styles = this.styles()
         return(
             <div>
                 Shop and Deliver
+            <div style={styles.giftRequestsContainer}>
+                
                 {this.state.requests.map((request)=>{
                     const {id, gender, years_old, interests, favorite_colors, size, notes} = request
                     return (
@@ -27,6 +30,16 @@ export default class ShopAndDeliver extends Component {
                     )
                 })}
             </div>
+            </div>
         )
+    }
+    styles=()=>{
+        return {
+            giftRequestsContainer: {
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "space-around"
+            }
+        }
     }
 }

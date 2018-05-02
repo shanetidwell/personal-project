@@ -1,1 +1,3 @@
-select * from store_requests;
+select * from gift_requests
+where status not in ('being fulfilled', 'fulfilled')
+and user_id <> ${user_id};

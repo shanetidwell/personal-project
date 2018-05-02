@@ -5,6 +5,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import {Redirect, Link} from 'react-router-dom';
 import {getUserInfo} from '../../redux/reducers/user';
+import {getGiftRequests, getMyDeliveries} from '../../redux/reducers/userRequest';
 
 const socket = io("http://localhost:4000");
 
@@ -16,26 +17,37 @@ class Navbar extends Component {
             requestMade: false
         }
         socket.on('receive request', (payload)=>{
-            console.log('received reeqest navbar')
+            console.log('received reeqest navbar', payload)
             this.updateCodeFromSockets(payload);
-        })
+        });
+        socket.on('delivery request accepted', (payload)=>{
+            console.log("accepted request ", payload);
+            this.props.getMyDeliveries();
+        });
         // this.socket = io("localhost:4000")
     }
     updateCodeFromSockets(payload){
-        console.log("upadatecodefrom sockets", payload);
-        this.setState({requestMade: payload.requestMade})
+        // console.log("upadate code from sockets", payload);
+        this.setState({requestMade: payload.requestMade});
+        this.props.getGiftRequests();
     }
     componentWillMount(){
-        this.props.getUserInfo()
+        this.props.getUserInfo();
+        this.props.getGiftRequests();
+        this.props.getMyDeliveries();
     }
-    componentDidMount(){
-        // if(this.props.giftRequest[0].id)
-        socket.emit('room', {room: 5});
-    }
-    componentWillReceiveProps(nextProps){
-        socket.emit('room', {room: 5});
-        // socket.emit('room', {room: this.props.giftRequest[0].id});
-    }
+    // componentDidMount(){
+    //     // if(this.props.giftRequest[0].id)
+    //     this.props.getGiftRequests();
+    //     console.log("proppps", this.props);
+    //     // socket.emit('room', {room: 5});
+    // }
+    // componentWillReceiveProps(nextProps){
+        
+        
+    //     // socket.emit('room', {room: 5});
+    //     // socket.emit('room', {room: this.props.giftRequest[0].id});
+    // }
 
 
     logout = ()=>{
@@ -46,19 +58,44 @@ class Navbar extends Component {
     }
     
     render (){
+        // console.log("propsss88888", this.props);
+        this.props.myGiftRequests.forEach(giftRequest=>{
+            // console.log("trying to join room")
+            socket.emit('room', {room: `gift${giftRequest.id}`})
+        });
+        this.props.myDeliveries.forEach(delieryRequest=>{
+            // console.log("trying to join delivry")
+            socket.emit('room', {room: `delivery${delieryRequest.id}`})
+        });
+
         const styles = this.styles();
-        console.log("nav Props", this.props)
+        // console.log("nav Props", this.props)
         if (this.state.logout){
             return (<Redirect to={"/"}/>)
         }
         return(
             <div style={styles.nav}>
-                <div style={styles.gifted}>
-                    Gifted.
-                </div>
+                <Link to={'/home'}>
+                    <div style={styles.gifted}>
+                        <img style={styles.icon}src={"https://i.imgur.com/LAP2JFe.png"}/>
+                        Gifted.
+                    </div>
+                </Link>
                 <div style={styles.navbar} className="main-font">
+                    {this.props.deliveryNotifications !==0?
+                     <Link to={'/myGiftRequests'}><button style={Object.assign({},styles.navContent, styles.myRequests)} data-badge={this.props.deliveryNotifications} className="button main-font notification" >My Gift Requests</button></Link> 
+                    :
                     <Link to={'/myGiftRequests'}><button style={Object.assign({},styles.navContent, styles.myRequests)} className="button main-font" >My Gift Requests</button></Link> 
-                    <Link to={'/myDeliveries'}><button style={Object.assign({},styles.navContent, styles.myRequests)} className="button  main-font" >My Deliveries</button></Link>   
+                    
+                    }
+                   
+                    
+                    {this.props.acceptanceNotifications !==0? 
+                    <Link to={'/myDeliveries'}><button style={Object.assign({},styles.navContent, styles.myRequests)} data-badge={this.props.acceptanceNotifications}  className="button  main-font notification" >My Deliveries</button></Link>   
+                    : 
+                    <Link to={'/myDeliveries'}><button style={Object.assign({},styles.navContent, styles.myRequests)} className="button  main-font" >My Deliveries</button></Link>  
+                    }
+                    
                     <button style={Object.assign({},styles.navContent, styles.logout)} className="button  main-font" onClick={()=>this.logout()}>Logout</button>
                     <img style={Object.assign({},styles.navContent, styles.profilePic)}/* className="profile-pic" */ src={this.props.user.profile_pic}></img>
                     {/* style={Object.assign({}, styles.input, styles.whatever)}            */}
@@ -78,13 +115,22 @@ class Navbar extends Component {
                 marginLeft: "15px"
 
             },
+            icon: {
+                height: "40px",
+                marginRight: "10px",
+                marginBottom: "5px"
+                // width: "40px"
+            }
+            ,
             gifted: {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 fontSize: "45px",
                 fontFamily:"'Amatic SC', cursive",
-                fontWeight: "bold"
+                fontWeight: "bold",
+                color: "#163D57",
+                textDecoration: "none"
             },
             nav:{
                 display: "flex",
@@ -120,8 +166,12 @@ class Navbar extends Component {
 
 function mapStateToProps(state){
         const {user, userRequest} = state;
-        const giftRequest = userRequest.giftRequest
-        return {user, giftRequest}   
+        const giftRequest = userRequest.giftRequest;
+        const myGiftRequests = userRequest.myGiftRequests;
+        const myDeliveries = userRequest.myDeliveries;
+        const acceptanceNotifications = userRequest.acceptanceNotifications;
+        const deliveryNotifications = userRequest.deliveryNotifications;
+        return {user, giftRequest, myGiftRequests, myDeliveries, acceptanceNotifications, deliveryNotifications}   
 }
 
-export default connect(mapStateToProps,{getUserInfo})(Navbar);
+export default connect(mapStateToProps,{getUserInfo, getGiftRequests, getMyDeliveries})(Navbar);

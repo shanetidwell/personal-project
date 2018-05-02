@@ -1,4 +1,4 @@
-INSERT INTO store_requests ( user_id, store_name, city, zip, status )
-VALUES (${user_id}, ${store_name},${city},${zip}, 'pending')
+INSERT INTO gift_requests ( user_id,gender, years_old, interests, size, favorite_colors, notes, status )
+VALUES (${user_id}, ${gender},${years_old},${interests}, ${size},${favorite_colors},${notes}, 'pending')
 
 RETURNING *;

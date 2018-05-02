@@ -1,13 +1,19 @@
 import React, {Component} from 'react'
 import axios from 'axios';
+import io from 'socket.io-client';
+import {connect} from "react-redux";
+import {acceptRequest} from '../../redux/reducers/userRequest';
+import {Link} from 'react-router-dom';
+
+const socket = io("http://localhost:4000");
 
 
-export default class PendingRequest extends Component {
+class PendingRequest extends Component {
     constructor(props){
         super(props)
          this.state = {
              users: [],
-             showRequesters: false,
+             showRequesters: true,
              requesters: []
 
 
@@ -22,19 +28,59 @@ export default class PendingRequest extends Component {
     //     })
     // }
     componentDidMount = () =>{
-        axios.get(`/api/deliveryRequests/${this.props.id}`).then(response=>{
-            console.log(response.data);
-            this.setState({requesters: response.data});
-        })   
+        // console.log("status," ,this.props.giftRequestInfo[0]);
+        if (this.props.giftRequestInfo[0].status !== "being fulfilled"){
+            axios.get(`/api/deliveryRequests/${this.props.id}`).then(response=>{
+                // console.log("requesters", response.data);
+                // console.log("id", this.props.id)
+                this.setState({requesters: response.data});
+            })   
+        }
+    }
+    // static getDerivedStateFromProps (nextProps, prevState) {
+    
+    //     console.log('does this even run', nextProps)
+    //     let returnedState = {}
+    //     // console.log(1111,this.props.giftRequestInfo[0].status);
+    //     if (nextProps.giftRequestInfo[0].status !== "being fulfilled"){
+    //         console.log("get requesters");
+    //         axios.get(`/api/deliveryRequests/${nextProps.id}`).then(response=>{
+    //             // console.log("requesters", response.data);
+    //             // console.log("id", this.props.id)
+    //             return {...prevState, requesters: response.data};
+    //         })   
+    //     }  
+    // }
+    componentWillReceiveProps(nextProps){
+        // console.log(1111,this.props.giftRequestInfo[0].status);
+        if (nextProps.giftRequestInfo[0].status !== "being fulfilled"){
+            // console.log("get requesters");
+            axios.get(`/api/deliveryRequests/${this.props.id}`).then(response=>{
+                // console.log("requesters", response.data);
+                // console.log("id", this.props.id)
+                this.setState({requesters: response.data});
+            })   
+        }        // socket.emit('room', {room: 5});
+        // socket.emit('room', {room: this.props.giftRequest[0].id});
     }
 
    collapse = ()=>{
        this.setState({showRequesters:false});
    }
-   acceptRequest = (deliveryRequestId)=>{
-       axios.post(`/api/deliveryRequests/accept/${deliveryRequestId}`).then(response=>{
-           console.log("accept", response)
-       }).catch(e=>console.log(e));
+   
+   acceptDeliveryRequest = (deliveryRequestId, requesterId, giftRequestId)=>{
+    //    console.log("accepting", deliveryRequestId, requesterId, giftRequestId);
+       this.props.acceptRequest(deliveryRequestId, requesterId, giftRequestId)
+        .then(() => this.setState({requesters: []}))
+    //    debugger
+       socket.emit('room', {room: `delivery${deliveryRequestId}`});
+       socket.emit('accept delivery request', {
+           room: `delivery${deliveryRequestId}`,
+           acceptRequest: true
+
+       })
+        
+        // console.log("set state");
    }
    declineRequest = (deliveryRequestId)=>{
        axios.post(`/api/deliveryRequests/decline/${deliveryRequestId}`).then(response=>{
@@ -43,63 +89,157 @@ export default class PendingRequest extends Component {
    }
 
     render (){
-        const {id, gender, years_old, interests, favorite_colors, size, notes} = this.props
+        const {id/* , gender, years_old, interests, favorite_colors, size, notes, status */} = this.props
+        // console.log("props",this.props)
+        // console.log("state", this.state)
+        const {gender, years_old, interests, favorite_colors, size, notes, status} = this.props.giftRequestInfo[0]
+        // console.log(2222, this.props.giftRequestInfo[0]);
+       
+        const styles = this.styles()
         return(
-            <div>
-                <div key={id}>
-                    <span>{id}</span>
-                     <span>{gender}</span>
-                    <span>{years_old}</span>
+            <div style={styles.requestContainer}>
+                <div style={styles.requestColumns}key={id}>
+                    <span style={styles.category}>Status: {status}</span>
+                    <span style={styles.category}>Gender: {gender}</span>
+                    <span style={styles.category}>Age: {years_old}</span>
+                    <span style={styles.category}>Interests: {interests}</span>
+                    <span style={styles.category}>Favorite Colors: {favorite_colors}</span>
+                    <span style={styles.category}>Size: {size}</span>
                     {this.state.showRequesters===false?
-                        <button onClick={()=>this.setState({showRequesters: true})}>Expand</button>
+                        <button onClick={()=>this.setState({showRequesters: true})}>See Requests</button>
                     :
                         <div>
                         <button onClick={()=>this.collapse()}>Collapse</button>
+                        {this.state.requesters.length===0 && this.props.giftRequestInfo[0].name !== null?
+                        <div>
+                        <h3>Being Fulfilled by</h3>
+                        <span style={styles.fulfiller}>{this.props.giftRequestInfo[0].name}</span>
+                        </div>
+                        :
+                        <div>
+                        <h3>Requesters</h3>
                         {this.state.requesters.map((requester, index)=>{
+                            console.log("requester", requester);
+                            let color = {
+                                backgroundColor: requester.delivery_request_seen === false? "#eff2f7": "white"
+                            }
                             return (
-                                <div key={index}>
-                                    <span>{requester.name}</span>
-                                    <span>{requester.stars}</span>
-                                    <button onClick={()=>this.acceptRequest(requester.id)}>Accept</button>
-                                    <button onClick={()=>this.declineRequest(requester.id)}>Decline</button>
+                                <div style={Object.assign({},styles.requesterContainer,color)} key={index}>
+                                <hr style={styles.line}/>
+                                {/* <div style={Object.assign({},styles.requestersContainer, color)} > */}
+                                <div style={styles.requestersContainer} >
+                                {/* {Object.assign({},styles.navContent, styles.profilePic)} */}
+                                    <div style={styles.requesterInfoContainer}>
+                                        <Link to={`/userReviews/${requester.user_id}`}><span /* style={styles.requesterName} */>{requester.name}</span></Link>
+                                        <span>Rating: {requester.stars===null? "No Ratings": `${requester.stars}/5`}</span>
+                                    </div>
+                                    <div style={styles.buttonContainer}>
+                                    <button style={styles.acceptButton} onClick={()=>this.acceptDeliveryRequest(requester.id, requester.user_id, requester.gift_request_id)}>Accept</button>
+                                    <button style={styles.rejectButton} onClick={()=>this.declineRequest(requester.id)}>Decline</button>
+                                    </div>
+                                </div>
                                 </div>
                             )
                         })}
                         </div>
-                        
+                        }
+                        </div>         
                     }
                 </div>
-                
-       
-                {/* <span>{requestId}</span>
-                <span>{gender}</span>
-                <span>{age}</span>
-                {this.state.showItems &&
-                <div>
-                    <p>{interests}</p>
-                    <span>{favoriteColors}</span>
-                    <span>{size}</span>
-                    <p>{notes}</p>
-                </div>
-                }
-                
-                {this.state.showItems===false?
-                <button className="button" onClick={()=>this.setState({showItems: true})}>Expand</button>
-                :
-                <button className = "button" onClick={()=>this.collapse()}>Collapse</button>
-                }
-                <button className = "button" onClick={()=>this.makeDelivery()}>Make Delivery</button>
-                {/* Shop and Deliver
-                {this.state.requests.map((request)=>{
-                    return (
-                        <div key={request.id}>
-                            <span>{request.store_name}</span>
-                            <span>{request.city}</span>
-                            <span>{request.zip}</span>
-                        </div>
-                    )
-                })} */} 
             </div>
         )
     }
+    styles = () => {
+        const twoColumn = window.innerWidth < 800
+        return {
+            requestContainer: {
+                display: 'flex',
+                // alignItems: 'center',
+                // justifyContent: 'center',
+                marginTop: 20,
+                width: '40vw',
+                borderRadius: 5,
+                boxShadow: "0px 2px 7px #C9C9C9",
+            },
+            requestersContainer: {
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "38vw"
+            },
+            requesterContainer: {
+                paddingLeft: "5px",
+                paddingBottom: "5px",
+                paddingRight: "5px",
+                borderRadius: 4
+            },
+            fulfiller: {
+                fontWeight: "bold"
+            },
+            line: {
+                display: "block",
+                height: "1px",
+                border: 0,
+                borderTop: "1px solid #ccc",
+                // margin: "1em 0",
+                padding: 0,
+            },
+            requesterName: {
+                marginLeft: "5px"
+            },
+            requesterInfoContainer: {
+                display: "flex",
+                flexDirection: "column",
+                marginBottom: "5px"
+            },
+            rejectButton: {
+                marginLeft: "5px",
+                border: "none",
+                cursor: "pointer",
+                borderRadius: "2px",
+                // marginTop: "20px",
+                backgroundColor: "Transparent",
+                border: "1px solid #163D57",
+                padding: "5px",
+                // fontSize: "12px"
+            },
+            acceptButton: {
+                border: "none",
+                cursor: "pointer",
+                borderRadius: "2px",
+                // marginTop: "20px",
+                backgroundColor: "#163D57",
+                border: "1px solid #163D57",
+                color: "white",
+                padding: "5px",
+                // fontSize: "12px"
+            },
+            buttonContainer: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+            },
+            requestColumns: {
+                padding: "10px",
+
+                display: "flex",
+                flexDirection: 'column',
+                textAlign: "left"
+                // justifyContent: "space-around"
+            },
+           
+        }
+
+    }
 }
+
+function mapStateToProps(state, ownProps){
+    const {userRequest} = state
+    const giftRequestInfo = userRequest.myGiftRequests.filter(request=>{
+        return request.id === ownProps.id
+    })
+    return {giftRequestInfo, userRequest};
+
+}
+export default connect(mapStateToProps, {acceptRequest})(PendingRequest)
+

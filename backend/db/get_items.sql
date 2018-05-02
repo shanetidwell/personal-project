@@ -1,2 +1,2 @@
 select * from items
-where store_request_id = ${request_id};
+where gift_request_id = ${request_id};

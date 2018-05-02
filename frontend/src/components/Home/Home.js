@@ -1,22 +1,25 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {getUserInfo} from '../../redux/reducers/user'
+import {getUserInfo} from '../../redux/reducers/user';
+import {setGiftRequestAddedFalse} from '../../redux/reducers/userRequest';
+
 // import './Home.css';
 
 class Home extends Component {
 
     componentWillMount(){
-        this.props.getUserInfo()
+        this.props.getUserInfo();
+        this.props.setGiftRequestAddedFalse();
     }
 
     render(){
         const styles = this.styles()
-        console.log(this.props)
+        console.log(11111, this.props)
         return (
             this.props.user.id?
             <div style={styles.contentContainer}>
-                <Link to={'/request'}><button style={styles.button} /* className="button request-button" */ >Place Order</button></Link>
+                <Link to='/request'><button style={styles.button} /* className="button request-button" */ >Place Order</button></Link>
                 <Link to={'/shopanddeliver'}><button style={styles.button}/*  className="button fulfill-button" */>Shop and Deliver</button></Link>
             </div>
 
@@ -58,4 +61,4 @@ function mapStateToProps(state){
     return {user}
 }
 
-export default connect(mapStateToProps, {getUserInfo})(Home)
+export default connect(mapStateToProps, {getUserInfo, setGiftRequestAddedFalse})(Home)

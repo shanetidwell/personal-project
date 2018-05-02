@@ -1,2 +1,2 @@
-select * from store_requests
+select * from gift_requests
 where id = ${id};

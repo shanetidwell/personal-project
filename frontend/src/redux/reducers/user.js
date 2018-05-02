@@ -16,7 +16,7 @@ const ADD_ADDRESS = 'ADD_ADDRESS'
 export default (state = initialState, action) => {
     switch (action.type) {
       case GET_USER_INFO + '_FULFILLED':
-        console.log("reducer hit")
+        // console.log("reducer hit")
         return { ...state, ...action.payload.data }
       case ADD_ADDRESS + '_FULFILLED':
       console.log("Add Address")

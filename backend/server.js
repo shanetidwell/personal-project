@@ -6,9 +6,12 @@ const cors = require("cors");
 const massive = require("massive");
 const passport = require("passport");
 const Auth0Strategy = require("passport-auth0");
+const socket = require('socket.io');
 const isAuthenticated = require("./middleware/isAuthenticated");
 const RequestController = require("./controllers/RequestController");
 const ItemController = require("./controllers/ItemController");
+const UserController = require("./controllers/UserController");
+const UserReviewController = require("./controllers/UserReviewsController");
 
 
 require("dotenv").config();
@@ -63,9 +66,9 @@ passport.use(
           db.create_user(userObj).then(results => {
             let user = results[0];
             return done(null, user);
-          });
+          }).catch(e=>console.log(e));
         }
-      });
+      }).catch(e=>console.log(e));
     }
   )
 );
@@ -109,16 +112,52 @@ app.get('/api/logout', function(req,res){
     res.status(200).send();
 })
 
-app.post("/api/storeRequest", isAuthenticated,RequestController.create);
-app.post("/api/storeRequest/:id/", isAuthenticated,RequestController.changeStatus);
-app.get('/api/storeRequest/:id', isAuthenticated, RequestController.getStoreName)
+app.get(`/api/userReviews/:id`, isAuthenticated, UserReviewController.getReviews);
+app.post(`/api/userReviews/addReview/:id` , isAuthenticated, UserReviewController.addReview);
+
+app.post("/api/giftRequest", isAuthenticated,RequestController.create);
+app.post("/api/giftRequest/:id", isAuthenticated,RequestController.addDeliveryRequest);
+app.get('/api/giftRequest/:id', isAuthenticated, RequestController.getStoreName);
 app.get("/api/requests", isAuthenticated,RequestController.get);
+app.get("/api/deliveryRequests/:id", isAuthenticated, RequestController.getDeliveries);
+app.get('/api/myGiftRequests', isAuthenticated, RequestController.getMyRequests);
+app.post('/api/deliveryRequests/accept/:id', isAuthenticated, RequestController.acceptDeliveryRequest);
+app.post('/api/deliveryRequests/decline/:id', isAuthenticated, RequestController.declineDeliveryRequest);
+app.post(`/api/notifications/clearDeliveryNotifications`, isAuthenticated, RequestController.clearDeliveryNotifications)
+app.post(`/api/notifications/clearAcceptanceNotifications`, isAuthenticated, RequestController.clearAcceptanceNotifications)
+app.get('/api/myDeliveries', isAuthenticated, RequestController.getMyDeliveries);
 
 
-app.post("/api/:store_request_id/item", isAuthenticated, ItemController.create);
-app.get('/api/items/:request_id', isAuthenticated, ItemController.get);
+app.post("/api/user/address", isAuthenticated, UserController.addAddress);
+
+
+// app.post("/api/:gift_request_id/item", isAuthenticated, ItemController.create);
+// app.get('/api/items/:request_id', isAuthenticated, ItemController.get);
 
 server = app.listen(port, () => {
   console.log("listening on port", port);
 });
+
+const io = socket(server);
+
+io.on('connection', (socket)=>{
+    // console.log('a user connected');
+
+    socket.on('disconnect', ()=>{
+        // console.log('user disconnected')
+    });
+
+    socket.on('room', function(data){
+        // console.log("joining room", data.room)
+        socket.join(data.room);
+    });
+    socket.on('make request', function(data){
+        // console.log("request made socket");
+        socket.broadcast.to(data.room).emit('receive request', data)
+    });
+    socket.on('accept delivery request', function(data){
+        // console.log("accepted made socket")
+        socket.broadcast.to(data.room).emit('delivery request accepted', data)
+    });
+})
 
