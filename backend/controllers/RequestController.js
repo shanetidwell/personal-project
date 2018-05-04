@@ -63,9 +63,14 @@ module.exports = {
     },
     getDeliveries: (req,res) =>{
         const db = req.app.get('db');
-        const user_id = req.user.id;
+        // const user_id = req.user.id;
         const gift_request_id = req.params.id;
         db.get_delivery_requests({gift_request_id}).then(results=>{
+            console.log({results})
+            const ratings = results.filter(review=> review.stars !== null);
+            console.log(ratings)
+            const avg = ratings.reduce((accumulator, currentValue)=>accumulator + currentValue.stars, 0)/ratings.length
+            console.log("AVG", avg);
             // console.log("get Delivery Requests", results);
             res.send(results);
         }).catch(e=>console.log(e));

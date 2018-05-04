@@ -4,6 +4,8 @@ import io from 'socket.io-client';
 import {connect} from "react-redux";
 import {acceptRequest} from '../../redux/reducers/userRequest';
 import {Link} from 'react-router-dom';
+import StarRatings from 'react-star-ratings';
+// import './PendingRequests.css'
 
 const socket = io("http://localhost:4000");
 
@@ -129,9 +131,16 @@ class PendingRequest extends Component {
                                 {/* <div style={Object.assign({},styles.requestersContainer, color)} > */}
                                 <div style={styles.requestersContainer} >
                                 {/* {Object.assign({},styles.navContent, styles.profilePic)} */}
-                                    <div style={styles.requesterInfoContainer}>
-                                        <Link to={`/userReviews/${requester.user_id}`}><span /* style={styles.requesterName} */>{requester.name}</span></Link>
-                                        <span>Rating: {requester.stars===null? "No Ratings": `${requester.stars}/5`}</span>
+                                    <div className={"requester_info_container"} style={styles.requesterInfoContainer}>
+                                        <Link to={`/userReviews/${requester.user_id}`}><span style={styles.requesterName}>{requester.name}</span></Link>
+                                        <StarRatings 
+                                            rating={requester.avg === null? 0: parseInt(requester.avg, 10)}
+                                            starRatedColor="#163D57"
+                                            numberOfStars={5}
+                                            starDimension="15px"
+                                            starSpacing = "2px"
+                                        />
+                                        {/* <span>Rating: {requester.stars===null? "No Ratings": `${requester.avg}/5`}</span> */}
                                     </div>
                                     <div style={styles.buttonContainer}>
                                     <button style={styles.acceptButton} onClick={()=>this.acceptDeliveryRequest(requester.id, requester.user_id, requester.gift_request_id)}>Accept</button>
@@ -185,7 +194,7 @@ class PendingRequest extends Component {
                 padding: 0,
             },
             requesterName: {
-                marginLeft: "5px"
+                color: "black"
             },
             requesterInfoContainer: {
                 display: "flex",

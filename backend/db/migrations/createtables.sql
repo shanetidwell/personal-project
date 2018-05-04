@@ -39,3 +39,8 @@ Create table items (
     size varchar,
     color varchar
 )
+Create table message_thread (
+    id serial PRIMARY key,
+    user_one integer REFERENCES users(id),
+    user_two integer REFERENCES users(id)
+)

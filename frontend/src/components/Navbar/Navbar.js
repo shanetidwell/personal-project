@@ -5,6 +5,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import {Redirect, Link} from 'react-router-dom';
 import {getUserInfo} from '../../redux/reducers/user';
+import {getMessages, getMessageThreads, addMessage} from '../../redux/reducers/messages';
 import {getGiftRequests, getMyDeliveries} from '../../redux/reducers/userRequest';
 
 const socket = io("http://localhost:4000");
@@ -24,6 +25,19 @@ class Navbar extends Component {
             console.log("accepted request ", payload);
             this.props.getMyDeliveries();
         });
+        socket.on("new thread",(payload)=>{
+            console.log("new thread", payload)
+            if(payload.recipientId === this.props.user.id||payload.senderId===this.props.user.id){
+                console.log("9999999")
+                socket.emit('room', {room: `message${payload.threadId}`})
+            }
+        })
+        socket.on("new message", (payload)=>{
+            console.log("new mesage", payload)
+            this.props.addMessage({sender: payload.sender, message: payload.message});
+            this.props.getMessages(this.props.messages.currentMessageThread)
+        })
+       
         // this.socket = io("localhost:4000")
     }
     updateCodeFromSockets(payload){
@@ -35,6 +49,7 @@ class Navbar extends Component {
         this.props.getUserInfo();
         this.props.getGiftRequests();
         this.props.getMyDeliveries();
+        this.props.getMessageThreads();
     }
     // componentDidMount(){
     //     // if(this.props.giftRequest[0].id)
@@ -58,7 +73,7 @@ class Navbar extends Component {
     }
     
     render (){
-        // console.log("propsss88888", this.props);
+        console.log("propsss88888", this.props);
         this.props.myGiftRequests.forEach(giftRequest=>{
             // console.log("trying to join room")
             socket.emit('room', {room: `gift${giftRequest.id}`})
@@ -67,6 +82,9 @@ class Navbar extends Component {
             // console.log("trying to join delivry")
             socket.emit('room', {room: `delivery${delieryRequest.id}`})
         });
+        this.props.messages.messageThreads.forEach(messageThread=>{
+            socket.emit("room", {room: `message${messageThread.id}`});
+        })
 
         const styles = this.styles();
         // console.log("nav Props", this.props)
@@ -74,14 +92,17 @@ class Navbar extends Component {
             return (<Redirect to={"/"}/>)
         }
         return(
-            <div style={styles.nav}>
+            <div className={"navbar"}style={styles.nav}>
+                <div style={styles.giftedContainer}>
                 <Link to={'/home'}>
                     <div style={styles.gifted}>
                         <img style={styles.icon}src={"https://i.imgur.com/LAP2JFe.png"}/>
                         Gifted.
                     </div>
                 </Link>
+                </div>
                 <div style={styles.navbar} className="main-font">
+                <Link to={`/messageThreads`}><button>Message</button></Link>
                     {this.props.deliveryNotifications !==0?
                      <Link to={'/myGiftRequests'}><button style={Object.assign({},styles.navContent, styles.myRequests)} data-badge={this.props.deliveryNotifications} className="button main-font notification" >My Gift Requests</button></Link> 
                     :
@@ -158,6 +179,11 @@ class Navbar extends Component {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "flex-end"               
+            },
+            giftedContainer :{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
             }
 
         }
@@ -165,13 +191,13 @@ class Navbar extends Component {
 }
 
 function mapStateToProps(state){
-        const {user, userRequest} = state;
+        const {user, userRequest, messages} = state;
         const giftRequest = userRequest.giftRequest;
         const myGiftRequests = userRequest.myGiftRequests;
         const myDeliveries = userRequest.myDeliveries;
         const acceptanceNotifications = userRequest.acceptanceNotifications;
         const deliveryNotifications = userRequest.deliveryNotifications;
-        return {user, giftRequest, myGiftRequests, myDeliveries, acceptanceNotifications, deliveryNotifications}   
+        return {user, giftRequest, myGiftRequests, myDeliveries, acceptanceNotifications, deliveryNotifications, messages}   
 }
 
-export default connect(mapStateToProps,{getUserInfo, getGiftRequests, getMyDeliveries})(Navbar);
+export default connect(mapStateToProps,{getUserInfo, getGiftRequests, getMyDeliveries, getMessageThreads, getMessages, addMessage})(Navbar);

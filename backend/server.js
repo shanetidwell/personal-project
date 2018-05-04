@@ -12,6 +12,7 @@ const RequestController = require("./controllers/RequestController");
 const ItemController = require("./controllers/ItemController");
 const UserController = require("./controllers/UserController");
 const UserReviewController = require("./controllers/UserReviewsController");
+const MessagesController = require("./controllers/MessagesController");
 
 
 require("dotenv").config();
@@ -119,7 +120,7 @@ app.post("/api/giftRequest", isAuthenticated,RequestController.create);
 app.post("/api/giftRequest/:id", isAuthenticated,RequestController.addDeliveryRequest);
 app.get('/api/giftRequest/:id', isAuthenticated, RequestController.getStoreName);
 app.get("/api/requests", isAuthenticated,RequestController.get);
-app.get("/api/deliveryRequests/:id", isAuthenticated, RequestController.getDeliveries);
+app.get("/api/deliveryRequests/:id", /* isAuthenticated ,*/ RequestController.getDeliveries);
 app.get('/api/myGiftRequests', isAuthenticated, RequestController.getMyRequests);
 app.post('/api/deliveryRequests/accept/:id', isAuthenticated, RequestController.acceptDeliveryRequest);
 app.post('/api/deliveryRequests/decline/:id', isAuthenticated, RequestController.declineDeliveryRequest);
@@ -129,6 +130,12 @@ app.get('/api/myDeliveries', isAuthenticated, RequestController.getMyDeliveries)
 
 
 app.post("/api/user/address", isAuthenticated, UserController.addAddress);
+
+app.get('/api/messages/:id', isAuthenticated, MessagesController.getMessages);
+app.get('/api/getThreadMessages/:id', isAuthenticated, MessagesController.getThreadMessages);
+app.post('/api/messages/addMessage/:id', isAuthenticated, MessagesController.addMessage);
+app.get('/api/getMessageThreads', isAuthenticated, MessagesController.getMessageThreads);
+// payload: axios.get('/api/getMessageThreads')
 
 
 // app.post("/api/:gift_request_id/item", isAuthenticated, ItemController.create);
@@ -141,14 +148,14 @@ server = app.listen(port, () => {
 const io = socket(server);
 
 io.on('connection', (socket)=>{
-    // console.log('a user connected');
+    console.log(socket.id);
 
     socket.on('disconnect', ()=>{
         // console.log('user disconnected')
     });
 
     socket.on('room', function(data){
-        // console.log("joining room", data.room)
+        console.log("joining room", data.room)
         socket.join(data.room);
     });
     socket.on('make request', function(data){
@@ -159,5 +166,13 @@ io.on('connection', (socket)=>{
         // console.log("accepted made socket")
         socket.broadcast.to(data.room).emit('delivery request accepted', data)
     });
+    socket.on('new message thread', function(data){
+        console.log("new message thread", data);
+        socket.broadcast.emit("new thread", data)
+    });
+    socket.on("send message", function(data){
+        console.log("sending message 1111111", data)
+        socket.broadcast.to(data.room).emit("new message", data)
+    })
 })
 
