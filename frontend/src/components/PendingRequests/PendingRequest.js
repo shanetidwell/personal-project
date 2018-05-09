@@ -2,10 +2,10 @@ import React, {Component} from 'react'
 import axios from 'axios';
 import io from 'socket.io-client';
 import {connect} from "react-redux";
-import {acceptRequest} from '../../redux/reducers/userRequest';
+import {acceptRequest, giftRequestFulfilled} from '../../redux/reducers/userRequest';
 import {Link} from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
-// import './PendingRequests.css'
+import './PendingRequests.css'
 
 const socket = io("http://localhost:4000");
 
@@ -70,9 +70,9 @@ class PendingRequest extends Component {
        this.setState({showRequesters:false});
    }
    
-   acceptDeliveryRequest = (deliveryRequestId, requesterId, giftRequestId)=>{
-    //    console.log("accepting", deliveryRequestId, requesterId, giftRequestId);
-       this.props.acceptRequest(deliveryRequestId, requesterId, giftRequestId)
+   acceptDeliveryRequest = (deliveryRequestId, requesterId, giftRequestId, delivery_amount)=>{
+        console.log("delivery amount", delivery_amount);
+       this.props.acceptRequest(deliveryRequestId, requesterId, giftRequestId, delivery_amount)
         .then(() => this.setState({requesters: []}))
     //    debugger
        socket.emit('room', {room: `delivery${deliveryRequestId}`});
@@ -94,7 +94,9 @@ class PendingRequest extends Component {
         const {id/* , gender, years_old, interests, favorite_colors, size, notes, status */} = this.props
         // console.log("props",this.props)
         // console.log("state", this.state)
-        const {gender, years_old, interests, favorite_colors, size, notes, status} = this.props.giftRequestInfo[0]
+        const {gender, years_old, interests, favorite_colors, size, notes, status, money_amount} = this.props.giftRequestInfo[0]
+        console.log("id", id);
+        console.log("PROOOPS", this.props.giftRequestInfo[0]);
         // console.log(2222, this.props.giftRequestInfo[0]);
        
         const styles = this.styles()
@@ -107,15 +109,19 @@ class PendingRequest extends Component {
                     <span style={styles.category}>Interests: {interests}</span>
                     <span style={styles.category}>Favorite Colors: {favorite_colors}</span>
                     <span style={styles.category}>Size: {size}</span>
+                    <span style={styles.category}>Max Price of Gift: {money_amount}</span>
                     {this.state.showRequesters===false?
                         <button onClick={()=>this.setState({showRequesters: true})}>See Requests</button>
                     :
                         <div>
                         <button onClick={()=>this.collapse()}>Collapse</button>
                         {this.state.requesters.length===0 && this.props.giftRequestInfo[0].name !== null?
-                        <div>
-                        <h3>Being Fulfilled by</h3>
-                        <span style={styles.fulfiller}>{this.props.giftRequestInfo[0].name}</span>
+                        <div >
+                            <h3>Being Fulfilled by</h3>
+                            <div style={styles.fulfilledContainer} className="requester_info_container">
+                                <Link to={`/userReviews/${this.props.giftRequestInfo[0].fulfiller_id}`}><span style={styles.fulfiller}>{this.props.giftRequestInfo[0].name} for {this.props.giftRequestInfo[0].delivery_amount}</span></Link>
+                                <button style={styles.deliveredButton} onClick={()=>this.props.giftRequestFulfilled(id)}>Delivered</button>
+                            </div>
                         </div>
                         :
                         <div>
@@ -131,7 +137,7 @@ class PendingRequest extends Component {
                                 {/* <div style={Object.assign({},styles.requestersContainer, color)} > */}
                                 <div style={styles.requestersContainer} >
                                 {/* {Object.assign({},styles.navContent, styles.profilePic)} */}
-                                    <div className={"requester_info_container"} style={styles.requesterInfoContainer}>
+                                    <div className="requester_info_container" style={styles.requesterInfoContainer}>
                                         <Link to={`/userReviews/${requester.user_id}`}><span style={styles.requesterName}>{requester.name}</span></Link>
                                         <StarRatings 
                                             rating={requester.avg === null? 0: parseInt(requester.avg, 10)}
@@ -142,9 +148,13 @@ class PendingRequest extends Component {
                                         />
                                         {/* <span>Rating: {requester.stars===null? "No Ratings": `${requester.avg}/5`}</span> */}
                                     </div>
+                                    <div style={styles.deliveryAmount}>
+                                        <span>Delivery Amount</span>
+                                        <span>{requester.delivery_amount}</span>
+                                    </div>
                                     <div style={styles.buttonContainer}>
-                                    <button style={styles.acceptButton} onClick={()=>this.acceptDeliveryRequest(requester.id, requester.user_id, requester.gift_request_id)}>Accept</button>
-                                    <button style={styles.rejectButton} onClick={()=>this.declineRequest(requester.id)}>Decline</button>
+                                        <button style={styles.acceptButton} onClick={()=>this.acceptDeliveryRequest(requester.id, requester.user_id, requester.gift_request_id, requester.delivery_amount)}>Accept</button>
+                                        <button style={styles.rejectButton} onClick={()=>this.declineRequest(requester.id)}>Decline</button>
                                     </div>
                                 </div>
                                 </div>
@@ -166,6 +176,7 @@ class PendingRequest extends Component {
                 // alignItems: 'center',
                 // justifyContent: 'center',
                 marginTop: 20,
+                padding: "10px",
                 width: '40vw',
                 borderRadius: 5,
                 boxShadow: "0px 2px 7px #C9C9C9",
@@ -183,7 +194,8 @@ class PendingRequest extends Component {
                 borderRadius: 4
             },
             fulfiller: {
-                fontWeight: "bold"
+                fontWeight: "bold",
+                color: "black"
             },
             line: {
                 display: "block",
@@ -223,10 +235,26 @@ class PendingRequest extends Component {
                 padding: "5px",
                 // fontSize: "12px"
             },
+            deliveredButton:{
+                border: "none",
+                cursor: "pointer",
+                borderRadius: "3px",
+                backgroundColor: "#163D57",
+                // border: "1px solid #163D57",
+                color: "white",
+                padding: "5px",
+
+            },
             buttonContainer: {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center"
+            },
+            fulfilledContainer: {
+                display: "flex",
+                justifyContent: "space-between",
+                width: '35vw',
+                
             },
             requestColumns: {
                 padding: "10px",
@@ -236,6 +264,13 @@ class PendingRequest extends Component {
                 textAlign: "left"
                 // justifyContent: "space-around"
             },
+            deliveryAmount: {
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: ".9rem"
+            }
            
         }
 
@@ -250,5 +285,5 @@ function mapStateToProps(state, ownProps){
     return {giftRequestInfo, userRequest};
 
 }
-export default connect(mapStateToProps, {acceptRequest})(PendingRequest)
+export default connect(mapStateToProps, {acceptRequest, giftRequestFulfilled})(PendingRequest)
 

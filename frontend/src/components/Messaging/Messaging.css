@@ -1,0 +1,7 @@
+
+/* div.messages_container {
+    overflow: auto
+} */
+.messages-container {
+    height: calc(100vh - 220px);
+}

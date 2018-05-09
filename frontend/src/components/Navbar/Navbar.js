@@ -28,14 +28,33 @@ class Navbar extends Component {
         socket.on("new thread",(payload)=>{
             console.log("new thread", payload)
             if(payload.recipientId === this.props.user.id||payload.senderId===this.props.user.id){
+                this.props.getMessageThreads();
                 console.log("9999999")
-                socket.emit('room', {room: `message${payload.threadId}`})
+                // socket.emit('room', {room: `message${payload.threadId}`})
             }
         })
         socket.on("new message", (payload)=>{
             console.log("new mesage", payload)
-            this.props.addMessage({sender: payload.sender, message: payload.message});
-            this.props.getMessages(this.props.messages.currentMessageThread)
+            const test = this.props.messages.messageThreads.find((messageThread)=>{
+                return messageThread.id === parseInt(payload.thread_id,10)
+            })
+            console.log("if stuff", test);
+            if(this.props.messages.messageThreads.find((messageThread)=>{
+                return messageThread.id === parseInt(payload.thread_id,10)
+            })){
+                console.log("testing am i here")
+                this.props.getMessageThreads()
+            }
+            console.log("239847329",this.props.messages.currentMessageThread)
+            if(this.props.messages.currentMessageThread && payload.sender!=this.props.user.id){
+                console.log("here");
+                this.props.addMessage({sender: payload.sender, message: payload.message});
+                this.props.getMessages(this.props.messages.currentMessageThread)
+
+            };
+            // if(!this.props.currentMessageThread){
+            // }
+            
         })
        
         // this.socket = io("localhost:4000")
@@ -73,7 +92,7 @@ class Navbar extends Component {
     }
     
     render (){
-        console.log("propsss88888", this.props);
+        // console.log("propsss88888", this.props);
         this.props.myGiftRequests.forEach(giftRequest=>{
             // console.log("trying to join room")
             socket.emit('room', {room: `gift${giftRequest.id}`})
@@ -156,7 +175,7 @@ class Navbar extends Component {
             nav:{
                 display: "flex",
                 justifyContent: "space-between",
-                boxShadow: "0px 2px 2px #163D57",
+                boxShadow: "0px 2px 7px #163D57",
                 marginBottom: "2px",
                 paddingRight: "20px",
                 paddingLeft: "20px"

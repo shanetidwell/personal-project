@@ -4,8 +4,8 @@ module.exports = {
         const user_id = req.user.id;
         const years_old = req.body.age;
         const favorite_colors = req.body.favoriteColors
-        const {gender, interests, size, notes} = req.body;
-        db.create_request({user_id, gender, years_old, interests, size, favorite_colors,notes}).then(results=>{
+        const {gender, interests, size, notes, maxMoney} = req.body;
+        db.create_request({user_id, gender, years_old, interests, size, favorite_colors,notes, maxMoney}).then(results=>{
             // console.log("gift Request")
             res.send(results);
         }).catch(e=>console.log(e));
@@ -33,10 +33,13 @@ module.exports = {
         const db = req.app.get('db');
         // console.log("adding Delivery Request")
         // const {status} = req.query;
+        console.log("addddddd", req.body);
+        const {delivery_amount} = req.body.stuffToSend;
+        console.log("DELIVERY AMOUNT", delivery_amount)
         const gift_request_id = req.params.id;
         const user_id = req.user.id;
         // console.log(status, gift_request_id, user_id);
-        db.add_delivery_request({user_id, gift_request_id}).then(response=>{
+        db.add_delivery_request({user_id, gift_request_id, delivery_amount}).then(response=>{
             // console.log("ADDED DELIVERY REQUEST")
             console.log("cheking boolean", response);
             res.status(200).send(response);
@@ -76,14 +79,26 @@ module.exports = {
         }).catch(e=>console.log(e));
 
     },
+    requestFulfilled: (req,res)=>{
+        const db = req.app.get('db');
+        const gift_request_id = req.params.id;
+        const user_id = req.user.id;
+        console.log('8888', gift_request_id, user_id )
+        db.gift_request_fulfilled({user_id, gift_request_id}).then(results=>{
+            console.log("JFULFILLLED", results);
+            res.send(results);
+        }).catch(e=>console.log(e));
+    },
     acceptDeliveryRequest: (req,res)=>{
         const db = req.app.get('db');
         const delivery_request_id = req.params.id;
         const deliverer_id = req.body.user_id;
         const user_id = req.user.id;
         const gift_request_id = req.body.gift_request_id;
-        db.accept_request({delivery_request_id, deliverer_id, user_id, gift_request_id}).then(results=>{
-            // console.log("accept request", results);
+        const delivery_amount = req.body.delivery_amount;
+        console.log("delivery AMount", delivery_amount);
+        db.accept_request({delivery_request_id, deliverer_id, user_id, gift_request_id, delivery_amount}).then(results=>{
+            console.log("ACCEPT request", results);
             res.send(results);
         }).catch(e=>console.log(e));
     },

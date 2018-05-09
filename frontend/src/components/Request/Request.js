@@ -21,6 +21,7 @@ class Request extends Component {
             city: "",
             state: "",
             zip: "",
+            maxMoney: "",
             added: false,
             giftRequestId: null,
             correctAddress: true
@@ -115,6 +116,10 @@ class Request extends Component {
                         <div style={styles.formItem}>
                             <span style={styles.label}>Favorite Colors</span>
                             <input style={styles.input} type="text" value={this.state.favoriteColors} name = "favoriteColors" onChange={this.handleChange}></input>
+                        </div>
+                        <div style={styles.formItem}>
+                            <span style={styles.label}>Max Price of Gift</span>
+                            <input style={styles.input} type="number" value={this.state.maxMoney} placeholder= "$" name = "maxMoney" onChange={this.handleChange}></input>
                         </div>
                         <div style={styles.formItem}>
                             <span style={styles.label}>Additional Info</span>

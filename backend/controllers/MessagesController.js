@@ -39,9 +39,17 @@ module.exports = {
         const db = req.app.get('db');
         const user_id = req.user.id;
         const thread_id = req.params.id;
-        db.get_messages({thread_id}).then(response=>{
-            console.log("tread messages response", response);
-            res.send(response);
+        db.get_messages({user_id, thread_id}).then(response=>{
+            console.log(111111,"tread messages response", response);
+            var stuffToSend = {
+                messages: response
+            }
+            db.get_who_messaging_with({user_id,thread_id}).then(name=>{
+                stuffToSend.name = name[0].name;
+                console.log(2222, stuffToSend);
+                res.send(stuffToSend);
+            })
+            // res.send(response);
         }).catch(e=>console.log(e))
     },
     addMessage: (req,res)=>{
@@ -51,7 +59,10 @@ module.exports = {
         const {message, recipientId} = req.body
         db.add_message({thread_id, message, user_id, recipientId}).then(response=>{
             console.log("added message", response)
-            res.send(response);
+            db.get_messages({user_id, thread_id}).then(messages=>{
+                res.send(messages);
+            })
+            // res.send(response);
         })
     },
     getMessageThreads: (req,res)=>{

@@ -18,6 +18,7 @@ const ACCEPT_REQUEST = "ACCEPT_REQUEST";
 const SET_REQUEST_ADDED_FALSE = "SET_REQUEST_ADDED_FALSE";
 const CLEAR_DELIVERY_NOTIFICATIONS = "CLEAR_DELIVERY_NOTIFICATIONS";
 const CLEAR_ACCEPTANCE_NOTIFICATIONS = "CLEAR_ACCEPTANCE_NOTIFICATIONS";
+const GIFT_REQUEST_FULFILLED = "GIFT_REQUEST_FULFILLED";
 
 export default (state = initialState, action) => {
     switch (action.type) {
@@ -39,7 +40,7 @@ export default (state = initialState, action) => {
         const notifications = parseInt(action.payload.data.count[0].count, 10);
         return {...state, myDeliveries: action.payload.data.deliveries, acceptanceNotifications: notifications}
       case ACCEPT_REQUEST + '_FULFILLED':
-        // console.log("action.payload.data", action.payload.data)
+        console.log("action.payload.data", action.payload.data)
         return {...state, myGiftRequests: action.payload.data}
       case SET_REQUEST_ADDED_FALSE:
         // console.log("falseeee");
@@ -49,6 +50,8 @@ export default (state = initialState, action) => {
         return {...state, deliveryNotifications: action.payload.data.count}
       case CLEAR_ACCEPTANCE_NOTIFICATIONS + `_FULFILLED`:
         return {...state, acceptanceNotifications: action.payload.data.count}
+      case GIFT_REQUEST_FULFILLED + `_FULFILLED`:
+        return {...state, myGiftRequests: action.payload.data}
       default:
         return state
     }
@@ -77,10 +80,10 @@ export function setGiftRequestAddedFalse(){
     payload: false
   }
 }
-export function acceptRequest(deliveryRequestId, user_id, gift_request_id ){
+export function acceptRequest(deliveryRequestId, user_id, gift_request_id, delivery_amount){
   return {
     type: ACCEPT_REQUEST,
-    payload: axios.post(`/api/deliveryRequests/accept/${deliveryRequestId}`, {user_id, gift_request_id})
+    payload: axios.post(`/api/deliveryRequests/accept/${deliveryRequestId}`, {user_id, gift_request_id, delivery_amount})
   }
 }
 export function clearDeliveryNotifications(){
@@ -93,6 +96,12 @@ export function clearAcceptanceNotifications(){
   return {
     type: CLEAR_ACCEPTANCE_NOTIFICATIONS,
     payload: axios.post(`/api/notifications/clearAcceptanceNotifications`)
+  }
+}
+export function giftRequestFulfilled(id){
+  return {
+    type: GIFT_REQUEST_FULFILLED,
+    payload: axios.post(`/api/giftRequests/fulfilled/${id}`)
   }
 }
 

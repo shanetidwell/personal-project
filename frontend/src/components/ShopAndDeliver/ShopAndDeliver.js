@@ -23,10 +23,10 @@ export default class ShopAndDeliver extends Component {
             <div style={styles.giftRequestsContainer}>
                 
                 {this.state.requests.map((request)=>{
-                    const {id, gender, years_old, interests, favorite_colors, size, notes} = request
+                    const {id, gender, years_old, interests, favorite_colors, size, notes, name, user_id, money_amount} = request
                     return (
                         <DeliveryRequest key={id} requestId={id} gender={gender} age={years_old} interests={interests}
-                         size={size} favoriteColors={favorite_colors} notes={notes}/>
+                         size={size} favoriteColors={favorite_colors} notes={notes} name={name} user_id={user_id} money_amount={money_amount}/>
                     )
                 })}
             </div>

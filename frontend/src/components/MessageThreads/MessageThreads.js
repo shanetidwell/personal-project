@@ -16,17 +16,25 @@ class MessageThreads extends Component {
         
         return (
             
-            <div >
-               MesssageThreads
+            <div style={styles.messageThreadPage} >
+               <div style={styles.header}>Messages</div>
                {this.props.messages.messageThreads.map(messageThread=>{
-                   console.log("message Thread", messageThread)
-                   return(
-                       <Link key={messageThread.id} to = {`/messages/${messageThread.id}`}>
-                        <div key={messageThread.id}>
-                            {messageThread.name}                       
-                        </div>
-                        </Link>
-                    )
+                //    console.log("message Thread", messageThread)
+                   if (messageThread.message !== null){
+                       return(
+                           
+                           <Link key={messageThread.id} to = {`/messages/${messageThread.id}`}>
+                           <div style={styles.messageThreadContainer}>
+                                <div style={styles.firstLetter}>{messageThread.name[0].toUpperCase()}</div>
+                                <div key={messageThread.id}>
+                                    <div style={styles.messageSender}>{messageThread.name}</div>
+                                    <div style={styles.message}>{messageThread.sender ===this.props.user.id? `You: ${messageThread.message}`: 
+                                        messageThread.message.length > 40? `${messageThread.message.slice(0, 40)}...`: messageThread.message}</div>                      
+                                </div>
+                            </div>
+                            </Link>
+                        )
+                   }
                })}
             </div>
 
@@ -58,6 +66,50 @@ class MessageThreads extends Component {
                 marginRight: "10px",
                 fontSize: "20px"
               },
+              header: {
+                backgroundColor: "#163D57",
+                width: "100%",
+                height: "40px",
+                marginBottom: "15px",
+                display: "flex",
+                alignItems: "center",
+                // paddingLeft: wideView ? (window.innerWidth-600)/2: "30%",
+                paddingLeft: "30%",
+                // color: isMobile ? 'red' : 'black',
+                color: "white",
+                boxShadow: "0px 2px 7px #C9C9C9",
+            },
+              firstLetter: {
+                  width: "30px",
+                  height: "30px",
+                  borderRadius: "50%",
+                  backgroundColor: "#C9C9C9",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  marginRight: "15px"                  
+              },
+              messageThreadPage: {
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+              },
+              messageThreadContainer: {
+                  display: "flex",
+                  boxShadow: "0px 2px 7px #C9C9C9",
+                  width: "50vw",
+                  padding: "10px",
+                  borderRadius: "5px",
+              },
+              message:{
+                  textAlign: "left",
+                  fontSize: ".95rem"
+              },
+              messageSender: {
+                  fontSize: "1.1rem",
+                  textAlign: "left"
+              }
         }
       }
 }

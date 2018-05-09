@@ -11,7 +11,7 @@ const isAuthenticated = require("./middleware/isAuthenticated");
 const RequestController = require("./controllers/RequestController");
 const ItemController = require("./controllers/ItemController");
 const UserController = require("./controllers/UserController");
-const UserReviewController = require("./controllers/UserReviewsController");
+const UserReviewsController = require("./controllers/UserReviewsController");
 const MessagesController = require("./controllers/MessagesController");
 
 
@@ -48,7 +48,7 @@ passport.use(
     },
     (accessToken, refreshToken, extraParams, profile, done) => {
       const db = app.get("db");
-      console.log("Profile", profile)
+    //   console.log("Profile", profile)
     //   profile.id = profile.id.split("|").pop();
     //   console.log(1111, profile.id)
       db.get_user_by_auth_id({ auth_id: profile.id }).then(results => {
@@ -99,10 +99,10 @@ app.get(
 app.get("/auth/me", (req, res) => {
     console.log("auth/me")
   if (req.isAuthenticated()) {
-      console.log("authenticated")
+    //   console.log("authenticated")
     return res.send(req.user);
   } else {
-      console.log("not authenticated")
+    //   console.log("not authenticated")
     return res.status(404).send("user not authenticated");
   }
 });
@@ -113,8 +113,10 @@ app.get('/api/logout', function(req,res){
     res.status(200).send();
 })
 
-app.get(`/api/userReviews/:id`, isAuthenticated, UserReviewController.getReviews);
-app.post(`/api/userReviews/addReview/:id` , isAuthenticated, UserReviewController.addReview);
+
+
+app.get(`/api/userReviews/:id`, isAuthenticated, UserReviewsController.getReviews);
+app.post(`/api/userReviews/addReview/:id` , isAuthenticated, UserReviewsController.addReview);
 
 app.post("/api/giftRequest", isAuthenticated,RequestController.create);
 app.post("/api/giftRequest/:id", isAuthenticated,RequestController.addDeliveryRequest);
@@ -124,9 +126,14 @@ app.get("/api/deliveryRequests/:id", /* isAuthenticated ,*/ RequestController.ge
 app.get('/api/myGiftRequests', isAuthenticated, RequestController.getMyRequests);
 app.post('/api/deliveryRequests/accept/:id', isAuthenticated, RequestController.acceptDeliveryRequest);
 app.post('/api/deliveryRequests/decline/:id', isAuthenticated, RequestController.declineDeliveryRequest);
+app.post(`/api/giftRequests/fulfilled/:id`, isAuthenticated, RequestController.requestFulfilled);
+
 app.post(`/api/notifications/clearDeliveryNotifications`, isAuthenticated, RequestController.clearDeliveryNotifications)
 app.post(`/api/notifications/clearAcceptanceNotifications`, isAuthenticated, RequestController.clearAcceptanceNotifications)
 app.get('/api/myDeliveries', isAuthenticated, RequestController.getMyDeliveries);
+
+app.get(`/api/getUsername/:id`, isAuthenticated, UserReviewsController.getName);
+
 
 
 app.post("/api/user/address", isAuthenticated, UserController.addAddress);
@@ -148,14 +155,14 @@ server = app.listen(port, () => {
 const io = socket(server);
 
 io.on('connection', (socket)=>{
-    console.log(socket.id);
+    // console.log(socket.id);
 
     socket.on('disconnect', ()=>{
         // console.log('user disconnected')
     });
 
     socket.on('room', function(data){
-        console.log("joining room", data.room)
+        // console.log("joining room", data.room)
         socket.join(data.room);
     });
     socket.on('make request', function(data){
@@ -167,11 +174,11 @@ io.on('connection', (socket)=>{
         socket.broadcast.to(data.room).emit('delivery request accepted', data)
     });
     socket.on('new message thread', function(data){
-        console.log("new message thread", data);
+        // console.log("new message thread", data);
         socket.broadcast.emit("new thread", data)
     });
     socket.on("send message", function(data){
-        console.log("sending message 1111111", data)
+        // console.log("sending message 1111111", data)
         socket.broadcast.to(data.room).emit("new message", data)
     })
 })
