@@ -90,7 +90,7 @@ class Request extends Component {
                             <span style={styles.label}>Zip</span>
                             <input style={styles.input} type="number" value={this.state.zip} name = "zip" onChange={this.handleChange}></input>
                         </div>
-                        <button className="button" onClick={()=>this.submitAddress()}>Submit</button>
+                        <button style={styles.submitButton} className="button" onClick={()=>this.submitAddress()}>Submit</button>
                      </div>
                     :
                     <div style={styles.container}>

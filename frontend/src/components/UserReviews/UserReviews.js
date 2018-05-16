@@ -105,7 +105,7 @@ const socket = io("http://localhost:4000");
                 <div style={styles.header}>
                     <h3>{this.state.name}</h3>
                     <div style={styles.iconContainer}onClick={()=>this.addMessageRecipient()}>
-                        <i style={styles.messageIcon}class="far fa-comment-alt"></i>
+                        <i style={styles.messageIcon}className="far fa-comment-alt"></i>
                         <span style={styles.messageSpan}>Message</span>
                     </div>
                 </div>
@@ -130,7 +130,7 @@ const socket = io("http://localhost:4000");
                         <div style={styles.reviewContainer} key={review.id}>
                             <div style={styles.userContainer}>
                                 
-                                <i style={{fontSize: "30px"}}class="fas fa-user-circle"></i>
+                                <i style={{fontSize: "30px"}}className="fas fa-user-circle"></i>
                                 <Link to={`/userReviews/${review.reviewer_id}`}>
                                     <span style={styles.reviewer}>
                                         {`${review.name}`}
@@ -229,7 +229,8 @@ const socket = io("http://localhost:4000");
                 padding: "5px",
             },
             reviewer: {
-                marginLeft: "8px"
+                marginLeft: "8px",
+                color: "black"
             },
             reviewContainer: {
                 marginBottom: "5px",

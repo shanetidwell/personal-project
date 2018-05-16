@@ -37,7 +37,7 @@ class Home extends Component {
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
                 // backgroundPosition: "center",
-                height: "60vh",
+                height: "80vh",
                 display: "flex",
                 justifyContent: "Center",
                 alignItems: "Center",

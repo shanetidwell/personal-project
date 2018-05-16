@@ -104,11 +104,13 @@ class MessageThreads extends Component {
               },
               message:{
                   textAlign: "left",
-                  fontSize: ".95rem"
+                  fontSize: ".95rem",
+                  color: "black"
               },
               messageSender: {
                   fontSize: "1.1rem",
-                  textAlign: "left"
+                  textAlign: "left",
+                  color: "black"                  
               }
         }
       }

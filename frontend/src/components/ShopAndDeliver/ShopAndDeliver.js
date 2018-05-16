@@ -19,7 +19,6 @@ export default class ShopAndDeliver extends Component {
         const styles = this.styles()
         return(
             <div>
-                Shop and Deliver
             <div style={styles.giftRequestsContainer}>
                 
                 {this.state.requests.map((request)=>{

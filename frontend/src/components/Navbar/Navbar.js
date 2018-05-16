@@ -110,6 +110,8 @@ class Navbar extends Component {
         if (this.state.logout){
             return (<Redirect to={"/"}/>)
         }
+        console.log("NNNAME", this.props.user.name[0]);
+        
         return(
             <div className={"navbar"}style={styles.nav}>
                 <div style={styles.giftedContainer}>
@@ -121,7 +123,7 @@ class Navbar extends Component {
                 </Link>
                 </div>
                 <div style={styles.navbar} className="main-font">
-                <Link to={`/messageThreads`}><button>Message</button></Link>
+                <Link to={`/messageThreads`}><button style={Object.assign({},styles.navContent, styles.myRequests)} className="button main-font">Message</button></Link>
                     {this.props.deliveryNotifications !==0?
                      <Link to={'/myGiftRequests'}><button style={Object.assign({},styles.navContent, styles.myRequests)} data-badge={this.props.deliveryNotifications} className="button main-font notification" >My Gift Requests</button></Link> 
                     :
@@ -137,7 +139,9 @@ class Navbar extends Component {
                     }
                     
                     <button style={Object.assign({},styles.navContent, styles.logout)} className="button  main-font" onClick={()=>this.logout()}>Logout</button>
-                    <img style={Object.assign({},styles.navContent, styles.profilePic)}/* className="profile-pic" */ src={this.props.user.profile_pic}></img>
+                    {/* <img style={Object.assign({},styles.navContent, styles.profilePic)} src={this.props.user.profile_pic}></img> */}
+                    <i style={{fontSize: "35px", color: "#163D57" }}className="fas fa-user-circle"></i>
+                    {/* <div style={styles.firstLetter}>{this.props.user.name[0]}</div> */}
                     {/* style={Object.assign({}, styles.input, styles.whatever)}            */}
                 </div>
             </div>
@@ -154,6 +158,18 @@ class Navbar extends Component {
             navContent: {
                 marginLeft: "15px"
 
+            },
+            firstLetter: {
+                backgroundColor: "#163D57",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "white",
+                marginRight: "15px",     
+                width: "35px",
+                height: "35px",
+                borderRadius: "50%",
+                boxShadow: "0px 0px 4px"             
             },
             icon: {
                 height: "40px",
@@ -183,13 +199,13 @@ class Navbar extends Component {
             
             logout: {
                 color: "#163D57",
-                fontSize: "1.5rem",
+                fontSize: "1.3rem",
                 fontFamily:"'Roboto', sans-serif",
                 backgroundColor: "Transparent"
             },
             myRequests: {
                 color: "#163D57",
-                fontSize: "1.5rem",
+                fontSize: "1.3rem",
                 fontfamily: "'Roboto', sans-serif",
                 backgroundColor: "Transparent"
             },

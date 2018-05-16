@@ -110,11 +110,11 @@ class PendingRequest extends Component {
                     <span style={styles.category}>Favorite Colors: {favorite_colors}</span>
                     <span style={styles.category}>Size: {size}</span>
                     <span style={styles.category}>Max Price of Gift: {money_amount}</span>
-                    {this.state.showRequesters===false?
+                    {/* {this.state.showRequesters===false?
                         <button onClick={()=>this.setState({showRequesters: true})}>See Requests</button>
-                    :
+                    : */
                         <div>
-                        <button onClick={()=>this.collapse()}>Collapse</button>
+                        {/* <button onClick={()=>this.collapse()}>Collapse</button> */}
                         {this.state.requesters.length===0 && this.props.giftRequestInfo[0].name !== null?
                         <div >
                             <h3>Being Fulfilled by</h3>

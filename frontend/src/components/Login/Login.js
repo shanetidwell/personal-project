@@ -9,7 +9,11 @@ export default class Login extends Component{
     const styles = this.styles();
     return(
     <div>
-    <div style={styles.banner}>Gifted.</div>
+       <div style={styles.gifted}>
+          <img style={styles.icon}src={"https://i.imgur.com/LAP2JFe.png"}/>
+          Gifted.
+      </div>
+    {/* <div style={styles.banner}>Gifted.</div> */}
     {/* <div style={styles.line}/> */}
     <div style={styles.background}>
       <div style={styles.header}> Not a Good Gift Giver? </div>
@@ -36,6 +40,27 @@ export default class Login extends Component{
         header: {
           fontSize: "40px",
         },
+        icon: {
+          height: "40px",
+          marginRight: "10px",
+          marginBottom: "5px"
+          // width: "40px"
+      },
+      gifted: {
+        display: "flex",
+        width: "100vw",
+        height: "80px",
+        // justifyContent: "center",
+        alignItems: "center",
+        fontSize: "45px",
+        fontFamily:"'Amatic SC', cursive",
+        fontWeight: "bold",
+        color: "#163D57",
+        textDecoration: "none",
+        paddingLeft: "20px",
+        borderBottom: "2px solid #163D57"
+        
+    },
         loginButton: {
           border: "none",
           cursor: "pointer",

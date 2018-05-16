@@ -3,7 +3,7 @@ import axios from 'axios'
 const initialState = {
     id: null,
     email: null,
-    name: null,
+    name: "",
     profile_pic: null,
     street: null,
     city: null,
