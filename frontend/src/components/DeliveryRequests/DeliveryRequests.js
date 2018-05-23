@@ -4,7 +4,8 @@ import io from 'socket.io-client';
 import {connect} from 'react-redux';
 import {getMyDeliveries} from '../../redux/reducers/userRequest';
 import {Link} from 'react-router-dom';
-const socket = io("http://localhost:4000");
+const socket = io(process.env.REACT_APP_SOCKET);
+// const socket = io("http://localhost:4000");
 
 
 class DeliveryRequest extends Component {

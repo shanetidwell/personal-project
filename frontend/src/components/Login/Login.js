@@ -18,7 +18,7 @@ export default class Login extends Component{
     <div style={styles.background}>
       <div style={styles.header}> Not a Good Gift Giver? </div>
       <div style={styles.header}> Leave it to Gifted </div>
-      <a href="http://localhost:4000/auth"><button style={styles.loginButton}>Login</button></a>
+      <a href={process.env.REACT_APP_LOGIN}><button style={styles.loginButton}>Login</button></a>
     </div>
     </div>
     )

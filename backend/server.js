@@ -20,6 +20,7 @@ require("dotenv").config();
 const app = express();
 const port = 4000;
 
+app.use(express.static(`${__dirname}/../frontend/build`));
 massive(process.env.CONNECTION_STRING).then(db => {
   app.set("db", db);
 });
@@ -91,8 +92,8 @@ app.get("/auth", passport.authenticate("auth0"));
 app.get(
   "/auth/callback",
   passport.authenticate("auth0", {
-    successRedirect: "http://localhost:3000/#/home",
-    failureRedirect: "http://localhost:3000/#/"
+    successRedirect: "/#/home",
+    failureRedirect: "/#/"
   })
 );
 

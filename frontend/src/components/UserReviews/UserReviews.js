@@ -7,7 +7,8 @@ import {Link, Redirect} from 'react-router-dom';
 import {addRecipient, updateCurrentThread} from '../../redux/reducers/messages';
 
 
-const socket = io("http://localhost:4000");
+// const socket = io("http://localhost:4000");
+const socket = io(process.env.REACT_APP_SOCKET);
 
  class UserReviews extends Component {
     constructor(props){

@@ -8,7 +8,7 @@ import {getUserInfo} from '../../redux/reducers/user';
 import {getMessages, getMessageThreads, addMessage} from '../../redux/reducers/messages';
 import {getGiftRequests, getMyDeliveries} from '../../redux/reducers/userRequest';
 
-const socket = io("http://localhost:4000");
+const socket = io(process.env.REACT_APP_SOCKET);
 
 class Navbar extends Component {
     constructor(props){

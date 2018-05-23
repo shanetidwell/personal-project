@@ -5,7 +5,8 @@ import io from 'socket.io-client';
 import {addRecipient, deleteRecipient, updateCurrentThread, getMessages, addMessage, updateMessages, clearMessageInfo} from '../../redux/reducers/messages';
 import {connect} from 'react-redux';
 import './Messaging.css'
-const socket = io("http://localhost:4000");
+// const socket = io("http://localhost:4000");
+const socket = io(process.env.REACT_APP_SOCKET);
 
 class Messaging extends Component {
     constructor(props){
